@@ -1,0 +1,12 @@
+package main
+
+type asdf struct {
+	bean string `bag`
+	cat int `tail`
+}
+
+func main() {
+	bean(
+		bag,
+	)
+}

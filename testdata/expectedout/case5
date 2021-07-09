@@ -1,0 +1,11 @@
+package main
+
+import (
+	"asdf"
+	"qwerty"
+)
+
+type beanbag struct {
+	Field		string	`sadf`
+	MyField2	string	`uiytiuyxzcvzxvc`
+}

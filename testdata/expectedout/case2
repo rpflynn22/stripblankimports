@@ -1,0 +1,15 @@
+package main
+
+import (
+	"hello"	// comment
+	//comment
+	"beanbag"
+	/* multi
+
+	line
+
+
+	comment
+
+	*/
+)

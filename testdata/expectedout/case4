@@ -1,0 +1,14 @@
+package main
+
+import (
+	"asdf"
+	"qwerty"
+)
+
+func main() {
+	hello(
+		"with",
+		"multiline",
+		"args",
+	)
+}

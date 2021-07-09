@@ -1,0 +1,12 @@
+package main
+
+// Comment here
+
+import (
+	"myimport"
+	
+
+	// Comment down
+)
+
+// Comment way down
