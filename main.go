@@ -39,14 +39,15 @@ func main() {
 	local := flag.String("local", "", "local grouping flag to goimports")
 	verbose := flag.Bool("v", false, "verbose logging")
 	writeBack := flag.Bool("w", false, "write back to file")
+	goimportsPath := flag.String("p", "goimports", "path to goimports executable")
 	flag.Parse()
 
 	filenames := flag.Args()
 
 	if *writeBack {
-		writeBackDriver(filenames, format, *local, *verbose)
+		writeBackDriver(filenames, format, *local, *goimportsPath, *verbose)
 	} else {
-		stdOutDriver(filenames, stitchXform(format, goImportsStdIO(*local)), *verbose)
+		stdOutDriver(filenames, stitchXform(format, goImportsStdIO(*local, *goimportsPath)), *verbose)
 	}
 }
 
@@ -89,7 +90,7 @@ func stdOutDriver(filenames []string, xform xformFn, verbose bool) {
 	}
 }
 
-func writeBackDriver(filenames []string, xform xformFn, local string, verbose bool) {
+func writeBackDriver(filenames []string, xform xformFn, local, goimportsPath string, verbose bool) {
 	for _, filename := range filenames {
 		content, err := os.ReadFile(filename)
 		if err != nil {
@@ -115,7 +116,7 @@ func writeBackDriver(filenames []string, xform xformFn, local string, verbose bo
 		}
 	}
 
-	if err := goImportsWriteBack(local, filenames...); err != nil && verbose {
+	if err := goImportsWriteBack(local, goimportsPath, filenames...); err != nil && verbose {
 		log.Printf("goimports error: %s", err)
 	}
 }
@@ -150,9 +151,9 @@ func fileIO(filename string, xform func([]byte) ([]byte, error)) error {
 // goImports runs the local goimports command on the provided filenames.
 // The local flag corresponds to goimports local flag. It's okay for it to be
 // empty.
-func goImportsWriteBack(local string, fname ...string) error {
+func goImportsWriteBack(local, goimportsPath string, fname ...string) error {
 	cmd := exec.Command(
-		"goimports",
+		goimportsPath,
 		append([]string{"-local", local, "-w"}, fname...)...,
 	)
 	if err := cmd.Run(); err != nil {
@@ -161,10 +162,10 @@ func goImportsWriteBack(local string, fname ...string) error {
 	return nil
 }
 
-func goImportsStdIO(local string) xformFn {
+func goImportsStdIO(local, goimportsPath string) xformFn {
 	return func(content []byte) ([]byte, error) {
 		cmd := exec.Command(
-			"goimports",
+			goimportsPath,
 			[]string{"-local", local}...,
 		)
 		cmd.Stdin = bytes.NewReader(content)
